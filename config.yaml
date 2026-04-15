@@ -1,0 +1,91 @@
+paths:
+  raw_dir: "raw"
+  data_dir: "data"
+  db_dir: "db"
+  input_dir: "input"
+  logs_dir: "logs"
+  sqlite_db: "db/memory.db"
+  qdrant_path: "db/qdrant_storage"
+  events_file: "data/events.jsonl"
+  reflections_dir: "data/reflections"
+
+embedding:
+  model_name: "BAAI/bge-small-en-v1.5"   # 384-dim, offline after first download
+  batch_size: 128                          # RTX 4080 can handle 256+; 128 is safe
+  device: "cuda"                           # "cuda" or "cpu"
+  cache_dir: "db/model_cache"
+
+qdrant:
+  collection_name: "memory_events"
+  vector_size: 384
+  storage_path: "db/qdrant_storage"
+
+ollama:
+  base_url: "http://localhost:11434"
+  model: "qwen2.5:7b"                     # or "mistral:7b", "llama3.2:3b"
+  timeout_seconds: 120
+  temperature: 0.3
+  max_context_events: 30
+
+collect:
+  git:
+    repos: []                              # Empty = auto-detect by walking parent dirs
+    max_days_back: 365
+    exclude_merge_commits: true
+  notes:
+    directory: "input/notes"
+    extensions: [".txt", ".md", ".ipynb"]   # Jupyter notebooks supported
+  calendar:
+    file: "input/calendar.csv"
+    date_column: ""                        # Leave empty for auto-detection
+    title_column: ""                       # Leave empty for auto-detection
+  google_calendar:
+    enabled: true
+    lookback_days: 365                     # How far back to sync on first run
+    calendars: []                          # Empty = all calendars; or list names/IDs
+  google_timeline:
+    directory: "input/Semantic_Location_History"
+    min_duration_minutes: 5
+
+google:
+  credentials_file: "credentials/google_client_secret.json"
+  token_file: "credentials/google_token.json"
+  sync_token_file: "credentials/calendar_sync_tokens.json"
+  weekly_summaries: true
+
+normalize:
+  importance:
+    git_commit_base: 0.6
+    git_merge_base: 0.3
+    note_base: 0.7
+    calendar_base: 0.5
+    location_base: 0.4
+    keyword_boost:
+      - "urgent"
+      - "important"
+      - "milestone"
+      - "release"
+      - "deadline"
+      - "shipped"
+      - "launched"
+      - "failed"
+      - "breakthrough"
+      - "finished"
+      - "completed"
+      - "fixed"
+
+reflect:
+  schedule_hour: 22
+  lookback_days: 1
+  max_events_in_prompt: 30
+
+ask:
+  top_k: 20             # Retrieve more candidates before reranking
+  min_score: 0.15       # Lower threshold - catches calendar/future events
+  context_max_chars: 12000  # More context for Ollama (qwen2.5:7b has 32k window)
+  rerank: true
+  note_content_chars: 600   # How many chars of note full_content to include in context
+
+pipeline:
+  timeout_minutes: 10
+  fail_fast: false

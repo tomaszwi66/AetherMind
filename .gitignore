@@ -1,0 +1,44 @@
+# Data directories - NEVER commit personal life data
+raw/
+data/
+db/
+input/
+logs/
+
+# Google OAuth tokens - NEVER commit these
+credentials/google_token.json
+credentials/google_client_secret.json
+credentials/calendar_sync_tokens.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Env
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models cache (large)
+# Uncomment if you want to gitignore the model cache too:
+# db/model_cache/
+
+# Keep directory stubs
+!raw/.gitkeep
+!data/.gitkeep
+!data/reflections/.gitkeep
+!db/.gitkeep
+!db/qdrant_storage/.gitkeep
+!input/.gitkeep
+!input/notes/.gitkeep
+!input/Semantic_Location_History/.gitkeep
+!logs/.gitkeep
+!credentials/.gitkeep
